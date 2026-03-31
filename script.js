@@ -237,25 +237,32 @@ window.startEdit = (id) => {
 
     todoElement.innerHTML = `
         <div class="edit-wrapper">
-            <input type="text" class="edit-input" id="edit-input-${id}" value="${todo.text}">
-            <button type="button" class="clear-input-btn" id="clear-input-${id}" title="지우기">
-                <i data-lucide="x" width="16" height="16"></i>
-            </button>
-            <span id="edit-date-display-${id}" class="selected-date-display ${todo.dueDate ? 'active' : ''}">${todo.dueDate || ''}</span>
-            <div class="date-btn-wrapper ${todo.dueDate ? 'has-value' : ''}" id="edit-date-wrapper-${id}">
-                <input type="date" id="edit-date-${id}" value="${todo.dueDate || ''}">
-                <i data-lucide="calendar" class="calendar-icon"></i>
+            <div class="text-content-wrapper">
+                <input type="text" class="edit-input" id="edit-input-${id}" value="${todo.text}">
+                <span id="edit-date-display-${id}" class="selected-date-display ${todo.dueDate ? 'active' : ''}">${todo.dueDate || ''}</span>
             </div>
-            <div class="color-picker-wrapper" id="edit-color-wrapper-${id}">
-                <button type="button" class="action-btn color-palette-btn" title="색상 선택" id="edit-color-btn-${id}" style="border-radius: 10px; padding: 0.4rem; color: #bbb;">
-                    <i data-lucide="palette" width="18" height="18"></i>
+            <div class="form-actions">
+                <button type="button" class="action-btn clear-input-btn" id="clear-input-${id}" title="지우기">
+                    <i data-lucide="x" width="16" height="16"></i>
                 </button>
-                <div class="color-dropdown" id="edit-color-dropdown-${id}">
-                    <button type="button" class="color-option white ${(!todo.color || todo.color === 'white') ? 'active' : ''}" data-color="white"></button>
-                    <button type="button" class="color-option pink ${(todo.color === 'pink') ? 'active' : ''}" data-color="pink"></button>
-                    <button type="button" class="color-option green ${(todo.color === 'green') ? 'active' : ''}" data-color="green"></button>
-                    <button type="button" class="color-option blue ${(todo.color === 'blue') ? 'active' : ''}" data-color="blue"></button>
+                <div class="date-btn-wrapper ${todo.dueDate ? 'has-value' : ''}" id="edit-date-wrapper-${id}">
+                    <input type="date" id="edit-date-${id}" value="${todo.dueDate || ''}">
+                    <i data-lucide="calendar" class="calendar-icon"></i>
                 </div>
+                <div class="color-picker-wrapper" id="edit-color-wrapper-${id}">
+                    <button type="button" class="action-btn color-palette-btn" title="색상 선택" id="edit-color-btn-${id}">
+                        <i data-lucide="palette" width="18" height="18"></i>
+                    </button>
+                    <div class="color-dropdown" id="edit-color-dropdown-${id}">
+                        <button type="button" class="color-option white ${(!todo.color || todo.color === 'white') ? 'active' : ''}" data-color="white"></button>
+                        <button type="button" class="color-option pink ${(todo.color === 'pink') ? 'active' : ''}" data-color="pink"></button>
+                        <button type="button" class="color-option green ${(todo.color === 'green') ? 'active' : ''}" data-color="green"></button>
+                        <button type="button" class="color-option blue ${(todo.color === 'blue') ? 'active' : ''}" data-color="blue"></button>
+                    </div>
+                </div>
+                <button type="button" class="important-toggle-btn ${todo.important ? 'active' : ''}" id="edit-important-btn-${id}" title="중요 표시">
+                    <i data-lucide="flag" id="edit-important-icon-${id}" class="${todo.important ? 'filled-flag' : ''}" width="18" height="18"></i>
+                </button>
             </div>
             <button class="edit-complete-btn" id="edit-complete-${id}">완료</button>
         </div>
@@ -334,6 +341,23 @@ window.startEdit = (id) => {
         document.addEventListener('click', closeEditDropdown);
     }
     
+    let editImportant = todo.important || false;
+    const editImportantBtn = document.getElementById(`edit-important-btn-${id}`);
+    const editImportantIcon = document.getElementById(`edit-important-icon-${id}`);
+
+    if (editImportantBtn) {
+        editImportantBtn.addEventListener('click', () => {
+            editImportant = !editImportant;
+            if (editImportant) {
+                editImportantBtn.classList.add('active');
+                editImportantIcon.classList.add('filled-flag');
+            } else {
+                editImportantBtn.classList.remove('active');
+                editImportantIcon.classList.remove('filled-flag');
+            }
+        });
+    }
+    
     editInput.focus();
     editInput.setSelectionRange(todo.text.length, todo.text.length);
 
@@ -355,6 +379,7 @@ window.startEdit = (id) => {
         if (newText !== todo.text) updates.text = newText;
         if (newDate !== oldDate) updates.dueDate = newDate || null;
         if (currentEditColor !== (todo.color || 'white')) updates.color = currentEditColor;
+        if (editImportant !== (todo.important || false)) updates.important = editImportant;
 
         if (Object.keys(updates).length > 0) {
             update(ref(db, 'todos/' + id), updates);
@@ -438,18 +463,19 @@ const renderTodos = () => {
         li.innerHTML = `
             <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo('${todo.id}')">
             <div class="todo-item-main">
-                <div class="todo-title-row">
-                    <button class="important-toggle-btn ${todo.important ? 'active' : ''}" onclick="toggleImportant('${todo.id}')" title="중요 표시">
-                        <i data-lucide="flag" class="${todo.important ? 'filled-flag' : ''}" width="18" height="18"></i>
-                    </button>
-                    <span class="todo-text ${todo.important ? 'important-text' : ''}">${todo.text}</span>
-                </div>
-                ${todo.dueDate ? `
-                    <div class="todo-date ${isOverdue ? 'overdue' : ''}">
-                        <i data-lucide="calendar" width="12" height="12"></i>
-                        <span>${todo.dueDate}</span>
+                <div class="todo-item-content">
+                    <div class="todo-title-row">
+                        <button class="important-toggle-btn ${todo.important ? 'active' : ''}" onclick="toggleImportant('${todo.id}')" title="중요 표시">
+                            <i data-lucide="flag" class="${todo.important ? 'filled-flag' : ''}" width="18" height="18"></i>
+                        </button>
+                        <span class="todo-text ${todo.important ? 'important-text' : ''}">${todo.text}</span>
                     </div>
-                ` : ''}
+                    ${todo.dueDate ? `
+                        <div class="todo-date ${isOverdue ? 'overdue' : ''}">
+                            <span>${todo.dueDate}</span>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
             <div class="todo-actions">
                 <button class="action-btn edit-btn" onclick="startEdit('${todo.id}')" aria-label="할 일 수정">

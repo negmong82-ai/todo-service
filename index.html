@@ -22,26 +22,30 @@
 
         <form id="todo-form" class="todo-form">
             <div class="input-wrapper">
-                <input type="text" id="todo-input" placeholder="오늘 할 일" autocomplete="off" required />
-                <span id="selected-date-display" class="selected-date-display"></span>
-                <div class="date-btn-wrapper" id="date-wrapper" title="마감 날짜 선택">
-                    <input type="date" id="todo-date" aria-label="마감 날짜 선택" />
-                    <i data-lucide="calendar" class="calendar-icon"></i>
+                <div class="text-content-wrapper">
+                    <input type="text" id="todo-input" placeholder="오늘 할 일" autocomplete="off" required />
+                    <span id="selected-date-display" class="selected-date-display"></span>
                 </div>
-                <div class="color-picker-wrapper" id="add-color-wrapper">
-                    <button type="button" class="action-btn color-palette-btn" title="색상 선택" id="add-color-btn" style="border-radius: 10px; padding: 0.4rem; color: #bbb;">
-                        <i data-lucide="palette" width="18" height="18"></i>
-                    </button>
-                    <div class="color-dropdown" id="add-color-dropdown">
-                        <button type="button" class="color-option white active" data-color="white"></button>
-                        <button type="button" class="color-option pink" data-color="pink"></button>
-                        <button type="button" class="color-option green" data-color="green"></button>
-                        <button type="button" class="color-option blue" data-color="blue"></button>
+                <div class="form-actions">
+                    <div class="date-btn-wrapper" id="date-wrapper" title="마감 날짜 선택">
+                        <input type="date" id="todo-date" aria-label="마감 날짜 선택" />
+                        <i data-lucide="calendar" class="calendar-icon"></i>
                     </div>
+                    <div class="color-picker-wrapper" id="add-color-wrapper">
+                        <button type="button" class="action-btn color-palette-btn" title="색상 선택" id="add-color-btn">
+                            <i data-lucide="palette" width="18" height="18"></i>
+                        </button>
+                        <div class="color-dropdown" id="add-color-dropdown">
+                            <button type="button" class="color-option white active" data-color="white"></button>
+                            <button type="button" class="color-option pink" data-color="pink"></button>
+                            <button type="button" class="color-option green" data-color="green"></button>
+                            <button type="button" class="color-option blue" data-color="blue"></button>
+                        </div>
+                    </div>
+                    <button type="button" class="important-toggle-btn" id="add-important-btn" title="중요 표시">
+                        <i data-lucide="flag" id="add-important-icon" width="18" height="18"></i>
+                    </button>
                 </div>
-                <button type="button" class="important-toggle-btn" id="add-important-btn" title="중요 표시" style="padding: 0.4rem; color: #e0e0e0; transition: all 0.2s ease;">
-                    <i data-lucide="flag" id="add-important-icon" width="18" height="18"></i>
-                </button>
             </div>
             <button type="submit" class="add-btn" aria-label="할 일 추가">
                 <i data-lucide="plus"></i>
